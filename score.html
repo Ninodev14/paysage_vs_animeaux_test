@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scores</title>
+    <style>
+        #scoreImage {
+            max-width: 100%;
+            max-height: 100%;
+            transform: rotate(67deg) scale(2.5);
+        }
+        #bg-score {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            transform: rotate(67deg) scale(2.5);
+        }
+        
+        html {
+        overflow:hidden;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Set the height of the body to 100% of the viewport height */
+            margin: 0;
+            overflow: hidden;
+            background-color: #F4D9BD;
+        }
+        .text {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        bottom: 0px;
+        right: 0px;
+    }
+    .top-left-text {
+        top: 0;
+        left: 0;
+        margin: 150px;
+        margin-left: 20px ;
+        position: absolute;
+        transform-origin: top left;
+        animation: growTopLeft 5.3s ease forwards;
+        transform: scale(1.2);
+    }
+
+    .bottom-right-text {
+        bottom: 0;
+        right: 0;
+        margin: 150px;
+        margin-right: 20px ;
+        position: absolute;
+        transform-origin: bottom right;
+        animation: growBottomRight 5.3s ease forwards;
+        transform: scale(1.2);
+    }
+
+    .score1, .score2 {
+        transition: all 0.5s ease-in-out;
+    }
+    
+    .score {
+        margin: 0px;
+    }
+
+    @keyframes growTopLeft {
+        0% {
+            transform: scale(1.2);
+        }
+        11.39% {
+            transform: scale(1.1);
+        }
+        21.07% {
+            transform: scale(1.1);
+        }
+        22.01% {
+            transform: scale(2.3);
+        }
+        22.5% {
+            transform: scale(1.7);
+        }
+        23% {
+            transform: scale(2.1);
+        }
+        23.5% {
+            transform: scale(2);
+        }
+        30.2% {
+            transform: scale(2);
+        }
+        33.3% {
+            transform: scale(1.9);
+        }
+        37.9% {
+            transform: scale(2.1);
+        }
+        42.4% {
+            transform: scale(1.9);
+        }
+        47.2% {
+            transform: scale(2.1);
+        }
+        55.6% {
+            transform: scale(1.7);
+        }
+        69.4% {
+            transform: scale(2.3);
+        }
+        78.3% {
+            transform: scale(1.9);
+        }
+        82.1% {
+            transform: scale(2.1);
+        }
+        99.5% {
+            transform: scale(1.8);
+        }
+        100% {
+            transform: scale(var(--Ascale));
+        }
+    }
+
+    @keyframes growBottomRight {
+        0% {
+            transform: scale(1.2);
+        }
+        11.39% {
+            transform: scale(1.1);
+        }
+        21.07% {
+            transform: scale(1.1);
+        }
+        22.01% {
+            transform: scale(2.3);
+        }
+        22.5% {
+            transform: scale(1.7);
+        }
+        23% {
+            transform: scale(2.1);
+        }
+        23.5% {
+            transform: scale(2);
+        }
+        30.2% {
+            transform: scale(2);
+        }
+        33.3% {
+            transform: scale(2.1);
+        }
+        37.9% {
+            transform: scale(1.9);
+        }
+        42.4% {
+            transform: scale(2.1);
+        }
+        47.2% {
+            transform: scale(1.9);
+        }
+        55.6% {
+            transform: scale(2.3);
+        }
+        69.4% {
+            transform: scale(1.7);
+        }
+        78.3% {
+            transform: scale(2.1);
+        }
+        82.1% {
+            transform: scale(1.9);
+        }
+        99.5% {
+            transform: scale(1.8);
+        }
+        100% {
+            transform: scale(var(--Bscale));
+        }
+    }
+
+    </style>
+
+    <script>
+        
+        let req = new XMLHttpRequest();
+        let data = null;
+        var pointsA = 0;
+        var pointsB = 0;
+        var mostPoints = 0;
+        req.open("GET", "https://api.jsonbin.io/v3/b/65ba11021f5677401f28c1a7/latest", true);
+        req.setRequestHeader("X-Master-Key", "$2a$10$t0TB.mYwq16iqROanh0X7OBAWGrdVeyeXa3Xd92lZNir2NRkwtOi.");
+        req.send();
+        req.onreadystatechange = () => {
+            if (req.readyState == XMLHttpRequest.DONE) {
+                const jsonData = JSON.parse(req.responseText);
+                setPoints(jsonData);
+            }
+        };
+        function mapValue(inputValue, inputRangeMin, inputRangeMax, outputRangeMin, outputRangeMax) {
+            return (inputValue - inputRangeMin) / (inputRangeMax - inputRangeMin) * (outputRangeMax - outputRangeMin) + outputRangeMin;
+        }
+
+        function setPoints(data){
+            pointsA = data.record.teams.find(team => team.teamName === "Team A").points;
+            pointsB = data.record.teams.find(team => team.teamName === "Team B").points;
+            if (pointsA > pointsB) {
+                mostPoints = pointsA;
+            } else {
+                mostPoints = pointsB;
+            }
+            var animatedElement = document.getElementById('scoreImage');
+    animatedElement.style.setProperty('--Apercent', `${mapValue((((pointsA / (pointsA + pointsB))) * 100), 0, 100, -205, 205)}%`);
+    if (pointsB > pointsA) {
+        document.body.style.backgroundColor = '#E1F5ED';
+        
+        var TopLeft = document.getElementById('tl');
+        TopLeft.style.setProperty('--Ascale','1.3');
+        var BottomRight = document.getElementById('br');
+        BottomRight.style.setProperty('--Bscale','2.7');
+    }else {
+        
+        
+        var TopLeft = document.getElementById('tl');
+        TopLeft.style.setProperty('--Ascale','2.7');
+        var BottomRight = document.getElementById('br');
+        BottomRight.style.setProperty('--Bscale','1.3');
+    }
+
+        } 
+    </script>
+</head>
+<body>
+
+    <div class="cont">
+        <img id="scoreImage" src="source/image/score/struggle.gif" alt="Score">
+        
+    </div>
+    <div class="text">
+        <div class="top-left-text" id="tl">
+            <h1 id="score1" class="score">00.0%</h1>
+            <p id="points1" class="score">0 pts</p>
+        </div>
+        <div class="bottom-right-text" id="br">
+            <h1 id="score2" class="score">00.0%</h1>
+            <p id="points2" class="score">0 pts</p>
+        </div>
+    </div>
+    <img id="bg-score" src="source/image/score/score.png" alt="Score">
+
+    <script>
+
+
+        
+
+        // Get the image element
+        var scoreImage = document.getElementById('scoreImage');
+        var points = 0;
+
+        function noStruggle() {
+            struggle = false
+        }
+        // Function to replace the GIF with the PNG and play the animation after the GIF ends
+        function replaceGifWithPng() {
+            // Set the source to the PNG
+            scoreImage.src = 'source/image/score/score.png';
+
+            // Add a class to trigger the animation
+            scoreImage.classList.add('animate-png');
+            
+        
+        }
+
+        setTimeout(noStruggle,5500);
+
+        // Add an event listener to the GIF to trigger the replacement when it ends
+        scoreImage.addEventListener('animationend', replaceGifWithPng);
+        scoreImage.addEventListener('webkitAnimationEnd', replaceGifWithPng);
+
+        // Play the GIF
+        scoreImage.classList.add('play-once');
+
+
+
+
+        // Set initial values
+    let struggle = false;
+    const score1Element = document.getElementById('score1');
+    const score2Element = document.getElementById('score2');
+    const points1Element = document.getElementById('points1');
+    const points2Element = document.getElementById('points2');
+    // Function to update text content with random values
+    function updateTextContent() {
+        if (struggle) {
+            const score1Percentage = (Math.random() * (54.9 - 45.0) + 45.0).toFixed(1);
+
+            const score2Percentage = 100 - score1Percentage;
+            score1Element.textContent = `${score1Percentage}%`;
+            score2Element.textContent = `${score2Percentage}%`;
+            points = ((score1Percentage / 50) * mostPoints) / 2;
+            points1Element.textContent = `${points.toFixed(0)} pts`
+            points2Element.textContent = `${points.toFixed(0)} pts`
+            setTimeout(updateTextContent, 80);
+
+             // Update every 100 milliseconds
+        } else {
+            score1Element.textContent = `${((pointsA / (pointsA + pointsB)) * 100).toFixed(1)}%`;
+            score2Element.textContent = `${((pointsB / (pointsA + pointsB)) * 100).toFixed(1)}%`;
+            points1Element.textContent = `${pointsA} pts`
+            points2Element.textContent = `${pointsB} pts`
+        }
+    }
+
+    // Call the function to start updating text content
+    
+
+    let counter = 0;
+    let countn = 0;
+
+    function pauseIncrementalText() {
+    counter = 48.0;
+    }
+    function updateIncrementalText() {
+        if (counter <= 50.0) {
+        
+            counter = (counter + 0.8);
+            setTimeout(updateIncrementalText, 30);
+            
+                countn = counter.toFixed(1)
+                points = ((counter / 50) * 2500) / 2;
+                
+            if (counter <=30.8 || counter >= 48.0) {
+                score1Element.textContent = `${countn}%`;
+                score2Element.textContent = `${countn}%`;
+                points1Element.textContent = `${points.toFixed(0)} pts`
+                points2Element.textContent = `${points.toFixed(0)} pts`
+            }
+                counter = (counter + 0.7);
+            
+        } else {
+            score1Element.textContent = `50.0%`;
+            score2Element.textContent = `50.0%`;
+            struggle = true;
+            setTimeout(updateTextContent, 430);
+        }
+    }
+
+    // Call the function to start updating the text content
+    updateIncrementalText();
+
+    
+    </script>
+
+    <style>
+        /* Add a class for playing the GIF only once */
+        .play-once {
+            animation: playOnce 4.5s forwards cubic-bezier(.25,-0.23,1,.29);
+        }
+
+        /* Define the playOnce animation to play once and freeze on the last frame */
+        @keyframes playOnce {
+            to {
+                opacity: 1;
+            }
+        }
+
+        @-webkit-keyframes playOnce {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Add a class for animating the PNG */
+        .animate-png {
+            animation: animatePng 0.8s forwards cubic-bezier(.25,-0.23,1,.29);
+        }
+
+        /* Define the animatePng animation */
+        @keyframes animatePng {
+            0% {
+                transform: rotate(67deg) scale(2.5) translate(calc(0% * 0.2), 0px);
+            }
+            20% {
+                transform: rotate(67deg) scale(2.5) translate(calc(-15% * 0.2), 0px);
+            }
+            50% {
+                transform: rotate(67deg) scale(2.5) translate(calc(-40% * 0.2 / 2), 0px);
+            }
+            100% {
+                transform: rotate(67deg) scale(2.5) translate(calc(var(--Apercent) * 0.2), 0px);
+            }
+        }
+    </style>
+
+</body>
+</html>

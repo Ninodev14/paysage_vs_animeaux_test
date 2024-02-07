@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            user-select: none; /* Désactive la sélection de contenu textuel */
+            margin: 0;
+            padding: 0;
+        }
+        canvas {
+            display: block; /* Assure que le canvas s'affiche en tant que bloc */
+        }
+    </style>
+</head>
+<body>
+    <h1 id="points">Points: 0</h1>
+    <canvas id="myCanvas"></canvas>
+    <script>
+        let canvas = document.getElementById('myCanvas');
+        let ctx = canvas.getContext('2d', { willReadFrequently: true });
+        let isDrawing = false;
+        let points = 0;
+        let gommePositions = {}; // Tableau pour stocker les positions déjà gommées
+        let surfaceTotale = canvas.width * canvas.height;
+        let surfaceGaumeeTotal = 0; // Suivre la surface gommée totale
+        let lastX, lastY;
+
+        function attribuerPoints(pourcentageGomme) {
+            let pointsAttribues = 0;
+
+            if (pourcentageGomme >= 100) {
+                pointsAttribues = 50;
+            } else if (pourcentageGomme >= 50) {
+                pointsAttribues = 25;
+            } else if (pourcentageGomme >= 25) {
+                pointsAttribues = 5;
+            }
+            document.getElementById('points').innerText = "Points: " + pointsAttribues;
+        }
+
+        function gommer(x, y, rayon) {
+            let keyX = Math.round(x); // Arrondir les coordonnées pour une correspondance précise
+            let keyY = Math.round(y);
+
+            // Récupérer la valeur de l'alpha du pixel à la position donnée
+            let pixelData = ctx.getImageData(x, y, 1, 1).data;
+            let alphaValue = pixelData[3];
+
+            if (!gommePositions[keyX]) {
+                gommePositions[keyX] = {};
+            }
+
+            if (!gommePositions[keyX][keyY] && alphaValue !== 0) {
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.lineWidth = rayon * 2;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = 'rgba(0,0,0,1)';
+                ctx.stroke();
+                ctx.closePath();
+
+                // Calculer la distance parcourue pour gommer
+                let distance = Math.sqrt((x - lastX) ** 2 + (y - lastY) ** 2);
+
+                // Calculer la surface gommée en fonction du rayon de la gomme
+                let surfaceGommee = Math.PI * (rayon ** 2);
+
+                // Mettre à jour la surface gommée totale en fonction de la surface gommée réelle
+                surfaceGaumeeTotal += surfaceGommee * (distance / (2 * rayon));// Correction de la surface en fonction de la longueur réelle de la ligne
+
+                // Calculer le pourcentage d'image effacée
+                let pourcentageGomme = (surfaceGaumeeTotal / surfaceTotale) * 25;
+                console.log("surface" + surfaceGaumeeTotal)
+                console.log("surface" + surfaceTotale)
+                console.log("%" + pourcentageGomme)
+                // Attribuer les points en fonction du pourcentage
+                attribuerPoints(pourcentageGomme);
+
+                gommePositions[keyX][keyY] = true; // Marquer comme gommé
+
+                lastX = x;
+                lastY = y;
+            }
+        }
+
+        let img = new Image();
+        img.onload = function () {
+            // Redimensionner le canvas en fonction de la taille de l'image
+            canvas.width = img.width;
+            canvas.height = img.height;
+            // Dessiner l'image sur le canvas
+            ctx.drawImage(img, 0, 0);
+            // Réinitialiser la surface gommée totale
+            surfaceGaumeeTotal = 0;
+        };
+        img.src = 'source/image/test.canvas.png';
+
+        // Ajout des écouteurs d'événements tactiles et de souris
+        canvas.addEventListener('mousedown', function (e) {
+            isDrawing = true;
+            let rect = canvas.getBoundingClientRect();
+            lastX = e.clientX - rect.left;
+            lastY = e.clientY - rect.top;
+        });
+
+        canvas.addEventListener('mousemove', function (e) {
+            if (isDrawing) {
+                let rect = canvas.getBoundingClientRect();
+                let x = e.clientX - rect.left;
+                let y = e.clientY - rect.top;
+                gommer(x, y, 20);
+            }
+        });
+
+        canvas.addEventListener('mouseup', function () {
+            isDrawing = false;
+        });
+
+        canvas.addEventListener('touchstart', function (e) {
+            isDrawing = true;
+            let rect = canvas.getBoundingClientRect();
+            lastX = e.touches[0].clientX - rect.left;
+            lastY = e.touches[0].clientY - rect.top;
+        });
+
+        canvas.addEventListener('touchmove', function (e) {
+            if (isDrawing) {
+                let rect = canvas.getBoundingClientRect();
+                let x = e.touches[0].clientX - rect.left;
+                let y = e.touches[0].clientY - rect.top;
+                gommer(x, y, 20);
+            }
+        });
+
+        canvas.addEventListener('touchend', function () {
+            isDrawing = false;
+        });
+
+    </script>
+</body>
+</html>

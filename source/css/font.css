@@ -1,0 +1,132 @@
+@font-face {
+  font-family: 'Fira Sans Extra Condensed';
+  src: url('font/FiraSansExtraCondensed-SemiBoldItalic.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Fira Sans Extra Condensed';
+  src: url('font/FiraSansExtraCondensed-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Fira Sans Extra Condensed';
+  src: url('font/FiraSansExtraCondensed-Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Fira Sans Extra Condensed';
+  src: url('font/FiraSansExtraCondensed-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fira Sans Extra Condensed';
+  src: url('font/FiraSansExtraCondensed-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'Fira Sans Extra Condensed', sans-serif;
+}
+
+h1,
+h2,
+h3,
+.p1,
+.p2,
+.btn,
+a,
+#btn1,
+#btn2,
+#btn3 {
+  font-family: 'Fira Sans Extra Condensed', sans-serif;
+}
+
+h1 {
+  font-weight: 600;
+  /* Semi-Bold */
+  font-style: italic;
+  font-size: 32px;
+}
+
+h2 {
+  font-weight: 500;
+  /* Semi-Bold */
+  font-style: italic;
+  font-size: 24px;
+}
+
+h3 {
+  font-weight: normal;
+  font-style: italic;
+  font-size: 20px;
+}
+
+.p1 {
+  font-weight: 300;
+  font-style: normal;
+  font-size: 16px;
+}
+
+.p2 {
+  font-weight: normal;
+  font-style: normal;
+  font-size: 12px;
+}
+
+.btn {
+  font-weight: normal;
+  font-style: normal;
+  font-size: 16px;
+  border-radius: 33px;
+  padding: 10px 20px;
+  color: black !important;
+
+}
+
+a {
+  text-decoration: underline;
+}
+
+.btn a {
+  color: black;
+}
+
+strong {
+  font-weight: bold;
+}
+
+#btn1,
+#btn2,
+#btn3 {
+  font-weight: normal;
+  font-style: normal;
+  font-size: 16px;
+}
+
+.responsive-in {
+  display: none;
+}
+
+@media only screen and (min-width: 450px) {
+  .responsive-out {
+    display: none;
+  }
+
+  .responsive-in {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+}

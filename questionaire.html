@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="source/css/reset.css">
+    <link rel="stylesheet" href="source/css/font.css">
+    <link rel="stylesheet" href="source/css/questionaire.css">
+    <title>Questionaire</title>
+</head>
+
+<body id="body-none">
+    <div class="responsive-out">
+        <div class="container">
+            <div class="container-question">
+                <h2 id="question">Choisis ton équipe</h2>
+                <h1 id="name-kind"></h1>
+                <p id="paragraphe-resultat1"></p>
+                <h3 id="paragraphe-resultat2"></h3>
+                <div class="container-img" id="container-img">
+                    <img src="source/image/Blason Animaux.svg" onclick="IniA()" id="img1"
+                        style="margin-top: 50px;"></img>
+                    <img src="source/image/Blason Paysages.svg" onclick="IniP()" id="img2"
+                        style="margin-top: 50px;"></img>
+                </div>
+                <h2 id="question-ask"></h2>
+                <p class="p1" id="paragraphe-center"></p>
+                <div class="container-button" id="container-button">
+                    <button onclick="Q2R1()" id="btn1">Sont vraiment trop cool </button>
+                    <div class="espacement-btn-question"></div>
+                    <button onclick="Q2R2()" id="btn2">Ne sont rien sans l'incroyable décor qui les accompagne
+                        !</button>
+                    <div class="espacement-btn-question"></div>
+                    <button onclick="Q2R3()" id="btn3">Inspirés du principe pré-cinématographique du zoopraxiscope (si,
+                        si, ça existe) !</button>
+                    <div class="espacement-btn-question"></div>
+                </div>
+                <button onclick="validationKind()" id="button-next" class="btn">C'EST PARTI</button>
+                <a onclick="iAmLost()" id="button-lost">JE NE LA TROUVE PAS...</a>
+                <a id="scorF" href="score.html"><button class="btn">VOIR LES SCORES</button></a>
+                <div id="container-plans">
+                    <img id="plans" src="" alt="plans">
+                    <div id="croix" onclick=" iAmLost()">
+                        <div class="ligne-horizontal"></div>
+                        <div class="ligne-vertical"></div>
+                    </div>
+                    <div id="fond-floue"></div>
+                    <div id="fond-noir"></div>
+                </div>
+                <div id="score-validation">
+                    <div class="container-score-validation">
+                        <h1 id="reponce-h1"></h1>
+                        <div id="container-score">
+                            <h3 id="container-score-h3"></h3>
+                        </div>
+                        <p class="p1" id="paragraphe-reponce"></p>
+                        <button class="btn" id="reponce-button">JE PASSE À LA SUITE</button>
+                    </div>
+                    <div class="fond-assombri"></div>
+                </div>
+                <div id="fond-img-plans">
+                    <div id="croix" onclick="zoomImgOut()">
+                        <div class="ligne-horizontal"></div>
+                        <div class="ligne-vertical"></div>
+                    </div>
+                    <div id="fond-floue"></div>
+                    <div id="fond-noir"></div>
+                </div>
+            </div>
+        </div>
+        <div class="container-bottom-info" id="container-bottom-info">
+            <p id="bottom-info">1/6</p>
+            <div id="barre-info">
+                <div id="barre-info-contenue"></div>
+            </div>
+        </div>
+        <script src="source/js/question.js"></script>
+    </div>
+
+    <div class="responsive-in">
+        <h1>Oups...</h1>
+        <h2>Ce site ne fonctionne que sur portable a la ligne-vertical</h2>
+    </div>
+</body>
+
+</html>

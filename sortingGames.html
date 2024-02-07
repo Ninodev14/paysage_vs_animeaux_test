@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Déplacer des images</title>
+    <style>
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .container img {
+            width: 100px;
+            height: auto;
+            position: absolute;
+            cursor: pointer;
+            top: 500px;
+            left: 50px;
+            z-index: 1;
+        }
+
+        #drop-zone-1,
+        #drop-zone-2 {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 5px;
+        }
+
+        #drop-zone-1 {
+            background-color: red;
+        }
+
+        #drop-zone-2 {
+            background-color: rgb(89, 0, 255);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img class="draggable-image" src="source/image/testMouve1.png" alt="Image à déplacer" data-draggable-zone="left">
+        <img class="draggable-image" src="source/image/testMouve2.png" alt="Image à déplacer" data-draggable-zone="left">
+        <img class="draggable-image" src="source/image/testMouve3.png" alt="Image à déplacer" data-draggable-zone="left">
+        <img class="draggable-image" src="source/image/testMouve4.png" alt="Image à déplacer" data-draggable-zone="left">
+        <img class="draggable-image" src="source/image/testMouve5.png" alt="Image à déplacer" data-draggable-zone="right">
+        <img class="draggable-image" src="source/image/testMouve6.png" alt="Image à déplacer" data-draggable-zone="right">
+        <img class="draggable-image" src="source/image/testMouve7.png" alt="Image à déplacer" data-draggable-zone="right">
+        <img class="draggable-image" src="source/image/testMouve8.png" alt="Image à déplacer" data-draggable-zone="right">
+        <img class="draggable-image" src="source/image/testMouve9.png" alt="Image à déplacer" data-draggable-zone="right">
+
+        <!-- Zone de dépôt représentée par des points -->
+        <div id="drop-zone-1" style="top: 50px; left: 50px;"></div>
+        <div id="drop-zone-2" style="top: 50px; right: 50px;"></div>
+
+        <!-- Chronomètre -->
+        <p id="timer">Temps écoulé : <span id="timerValue">0</span> secondes</p>
+        <!-- Points -->
+        <p id="points">Points : <span id="pointsValue">0</span></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('.draggable-image');
+            const dropZone1 = document.getElementById('drop-zone-1');
+            const dropZone2 = document.getElementById('drop-zone-2');
+            let offsetX = [];
+            let offsetY = [];
+            let isDragging = [];
+            let allImagesOnDropZones = false;
+            let seconds = 0;
+            let points = 0;
+            let timer;
+
+            for (let i = 0; i < images.length; i++) {
+                offsetX[i] = 0;
+                offsetY[i] = 0;
+                isDragging[i] = false;
+
+                images[i].addEventListener('mousedown', function(event) {
+                    startDragging(event, i);
+                });
+                images[i].addEventListener('touchstart', function(event) {
+                    startDragging(event, i);
+                });
+            }
+
+            document.addEventListener('mouseup', function() {
+                for (let i = 0; i < images.length; i++) {
+                    isDragging[i] = false;
+                }
+            });
+            document.addEventListener('touchend', function() {
+                for (let i = 0; i < images.length; i++) {
+                    isDragging[i] = false;
+                }
+            });
+
+            function startDragging(event, index) {
+                event.preventDefault();
+                isDragging[index] = true;
+                if (event.type === 'mousedown') {
+                    offsetX[index] = event.clientX - images[index].getBoundingClientRect().left;
+                    offsetY[index] = event.clientY - images[index].getBoundingClientRect().top;
+                } else if (event.type === 'touchstart') {
+                    offsetX[index] = event.touches[0].clientX - images[index].getBoundingClientRect().left;
+                    offsetY[index] = event.touches[0].clientY - images[index].getBoundingClientRect().top;
+                }
+                document.addEventListener('mousemove', function(e) {
+                    dragImage(e, index);
+                });
+                document.addEventListener('touchmove', function(e) {
+                    dragImage(e, index);
+                }, { passive: false });
+            }
+
+            function dragImage(event, index) {
+                if (isDragging[index]) {
+                    event.preventDefault();
+                    let x, y;
+                    if (event.type === 'mousemove') {
+                        x = event.clientX - offsetX[index];
+                        y = event.clientY - offsetY[index];
+                    } else if (event.type === 'touchmove') {
+                        x = event.touches[0].clientX - offsetX[index];
+                        y = event.touches[0].clientY - offsetY[index];
+                    }
+                    images[index].style.left = x + 'px';
+                    images[index].style.top = y + 'px';
+                    checkAllImagesOnDropZones();
+                }
+            }
+
+            function checkAllImagesOnDropZones() {
+                let allOnDropZones = true;
+                for (let i = 0; i < images.length; i++) {
+                    const rectImage = images[i].getBoundingClientRect();
+                    const rectZone1 = dropZone1.getBoundingClientRect();
+                    const rectZone2 = dropZone2.getBoundingClientRect();
+
+                    // Vérifie si l'image correspond à la bonne drop zone
+                    if (images[i].getAttribute('data-draggable-zone') === 'left') {
+                        // Vérifie si l'image est sur la drop zone 1
+                        if (!(rectImage.right >= rectZone1.left &&
+                                rectImage.left <= rectZone1.right &&
+                                rectImage.bottom >= rectZone1.top &&
+                                rectImage.top <= rectZone1.bottom)) {
+                            allOnDropZones = false;
+                            break;
+                        }
+                    } else if (images[i].getAttribute('data-draggable-zone') === 'right') {
+                        // Vérifie si l'image est sur la drop zone 2
+                        if (!(rectImage.right >= rectZone2.left &&
+                                rectImage.left <= rectZone2.right &&
+                                rectImage.bottom >= rectZone2.top &&
+                                rectImage.top <= rectZone2.bottom)) {
+                            allOnDropZones = false;
+                            break;
+                        }
+                    }
+                }
+                if (allOnDropZones && !allImagesOnDropZones) {
+                    allImagesOnDropZones = true;
+                    console.log("Toutes les images sont sur leurs points de dépôt.");
+                    calculatePoints();
+                }
+            }
+
+            function calculatePoints() {
+                let imagesOnDropZone1 = 0;
+                let imagesOnDropZone2 = 0;
+
+                // Compter le nombre d'images sur chaque dropzone
+                for (let i = 0; i < images.length; i++) {
+                    const rectImage = images[i].getBoundingClientRect();
+                    const rectZone1 = dropZone1.getBoundingClientRect();
+                    const rectZone2 = dropZone2.getBoundingClientRect();
+
+                    if (
+                        rectImage.right >= rectZone1.left &&
+                        rectImage.left <= rectZone1.right &&
+                        rectImage.bottom >= rectZone1.top &&
+                        rectImage.top <= rectZone1.bottom
+                    ) {
+                        imagesOnDropZone1++;
+                    } else if (
+                        rectImage.right >= rectZone2.left &&
+                        rectImage.left <= rectZone2.right &&
+                        rectImage.bottom >= rectZone2.top &&
+                        rectImage.top <= rectZone2.bottom
+                    ) {
+                        imagesOnDropZone2++;
+                    }
+                }
+
+                // Vérifier s'il y a des images sur chaque dropzone
+                if (imagesOnDropZone1 > 0 && imagesOnDropZone2 > 0) {
+                    if (seconds <= 10) {
+                        clearInterval(timer);
+                        points = 50;
+                    } else if (seconds <= 20) {
+                        clearInterval(timer);
+                        points = 25;
+                    } else if (seconds <= 30) {
+                        clearInterval(timer);
+                        points = 5;
+                    }
+                } else {
+                    clearInterval(timer);
+                    points = 0;
+                }
+
+                document.getElementById('pointsValue').textContent = points;
+            }
+
+            timer = setInterval(function() {
+                seconds++;
+                document.getElementById('timerValue').textContent = seconds;
+            }, 1000); // Incrémente chaque seconde
+        });
+    </script>
+
+</body>
+
+</html>
